@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth, API } from "@/context/AuthContext";
 import KtpViewer from "@/components/KtpViewer";
 import { useNoCapture } from "@/hooks/useNoCapture";
+import { formatLamaTinggal, formatTanggalID } from "@/lib/duration";
 
 const GROUPS = [
   { key: "all", label: "Semua" },
@@ -186,6 +187,19 @@ export default function ViewerDashboard() {
                   <p className="text-sm font-medium text-[#1C1C1E] truncate">
                     {r.nama_penghuni}
                   </p>
+                  {r.tanggal_masuk && (
+                    <div className="mt-2 pt-2 border-t border-[#E5E5EA] space-y-0.5">
+                      <p className="text-[10px] uppercase tracking-wider text-[#8E8E93] font-semibold">
+                        Lama Tinggal
+                      </p>
+                      <p className="text-xs font-medium text-[#1C1C1E]">
+                        {formatLamaTinggal(r.tanggal_masuk)}
+                      </p>
+                      <p className="text-[11px] text-[#8E8E93]">
+                        sejak {formatTanggalID(r.tanggal_masuk)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </motion.button>
             ))}

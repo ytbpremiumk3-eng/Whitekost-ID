@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth, API } from "@/context/AuthContext";
 import KtpViewer from "@/components/KtpViewer";
+import { formatLamaTinggal, formatTanggalID } from "@/lib/duration";
 
 const fileToBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -80,7 +81,7 @@ export default function AdminDashboard() {
   const [group, setGroup] = useState("all");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ nama_penghuni: "", foto_ktp: "" });
+  const [form, setForm] = useState({ nama_penghuni: "", foto_ktp: "", tanggal_masuk: "" });
   const [saving, setSaving] = useState(false);
   const [emptyConfirm, setEmptyConfirm] = useState(null);
   const [viewer, setViewer] = useState(null);
@@ -123,7 +124,11 @@ export default function AdminDashboard() {
 
   const openEdit = (r) => {
     setEditing(r);
-    setForm({ nama_penghuni: r.nama_penghuni || "", foto_ktp: r.foto_ktp || "" });
+    setForm({
+      nama_penghuni: r.nama_penghuni || "",
+      foto_ktp: r.foto_ktp || "",
+      tanggal_masuk: r.tanggal_masuk || "",
+    });
     setSheetOpen(true);
   };
 
@@ -143,15 +148,20 @@ export default function AdminDashboard() {
   };
 
   const saveOccupied = async () => {
-    if (!form.nama_penghuni.trim() || !form.foto_ktp) {
-      toast.error("Nama penghuni dan foto KTP wajib diisi");
+    if (!form.nama_penghuni.trim() || !form.foto_ktp || !form.tanggal_masuk) {
+      toast.error("Nama, foto KTP, dan tanggal masuk wajib diisi");
       return;
     }
     setSaving(true);
     try {
       await axios.put(
         `${API}/rooms/${editing.nomor_kamar}`,
-        { is_occupied: true, nama_penghuni: form.nama_penghuni.trim(), foto_ktp: form.foto_ktp },
+        {
+          is_occupied: true,
+          nama_penghuni: form.nama_penghuni.trim(),
+          foto_ktp: form.foto_ktp,
+          tanggal_masuk: form.tanggal_masuk,
+        },
         { headers: authHeaders }
       );
       toast.success(`Kamar ${editing.nomor_kamar} diperbarui`);
@@ -335,6 +345,11 @@ export default function AdminDashboard() {
                       <p className={`text-sm truncate ${r.is_occupied ? "text-[#1C1C1E] font-medium" : "text-[#FF3B30]/70 italic"}`}>
                         {r.is_occupied ? r.nama_penghuni : "Belum ada penghuni"}
                       </p>
+                      {r.is_occupied && r.tanggal_masuk && (
+                        <p className="text-[11px] text-[#8E8E93] truncate mt-0.5">
+                          {formatLamaTinggal(r.tanggal_masuk)}
+                        </p>
+                      )}
                     </div>
                     <Button
                       variant="ghost"
@@ -375,6 +390,23 @@ export default function AdminDashboard() {
                   data-testid="input-nama-penghuni"
                   className="h-11 rounded-xl"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tanggal_masuk">Tanggal Masuk</Label>
+                <Input
+                  id="tanggal_masuk"
+                  type="date"
+                  value={form.tanggal_masuk}
+                  onChange={(e) => setForm({ ...form, tanggal_masuk: e.target.value })}
+                  max={new Date().toISOString().split("T")[0]}
+                  data-testid="input-tanggal-masuk"
+                  className="h-11 rounded-xl"
+                />
+                {form.tanggal_masuk && (
+                  <p className="text-xs text-[#8E8E93]">
+                    Lama tinggal: <span className="font-medium text-[#1C1C1E]">{formatLamaTinggal(form.tanggal_masuk) || "-"}</span>
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Foto KTP</Label>

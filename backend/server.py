@@ -63,6 +63,7 @@ class Room(BaseModel):
     is_occupied: bool = False
     nama_penghuni: str = ""
     foto_ktp: str = ""
+    tanggal_masuk: str = ""  # ISO date YYYY-MM-DD
     updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
@@ -70,6 +71,7 @@ class RoomUpdate(BaseModel):
     is_occupied: Optional[bool] = None
     nama_penghuni: Optional[str] = None
     foto_ktp: Optional[str] = None
+    tanggal_masuk: Optional[str] = None
 
 
 async def get_current_role(authorization: Optional[str] = Header(default=None)) -> str:
@@ -159,14 +161,19 @@ async def update_room(
     if updates.get("is_occupied") is False:
         updates["nama_penghuni"] = ""
         updates["foto_ktp"] = ""
+        updates["tanggal_masuk"] = ""
 
-    # If marking occupied, require name + foto in the payload OR existing
+    # If marking occupied, require name + foto + tanggal_masuk
     merged_preview = {**existing, **updates}
     if merged_preview.get("is_occupied"):
-        if not (merged_preview.get("nama_penghuni") and merged_preview.get("foto_ktp")):
+        if not (
+            merged_preview.get("nama_penghuni")
+            and merged_preview.get("foto_ktp")
+            and merged_preview.get("tanggal_masuk")
+        ):
             raise HTTPException(
                 status_code=400,
-                detail="Nama penghuni dan foto KTP wajib untuk kamar terisi",
+                detail="Nama, foto KTP, dan tanggal masuk wajib untuk kamar terisi",
             )
 
     updates["updated_at"] = datetime.now(timezone.utc).isoformat()
