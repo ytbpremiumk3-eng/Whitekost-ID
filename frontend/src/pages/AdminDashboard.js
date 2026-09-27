@@ -196,39 +196,39 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#F2F2F7] pb-24">
       <header className="sticky top-0 z-30 backdrop-blur-2xl bg-white/80 border-b border-[#E5E5EA]">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-[14px] bg-white shadow-sm border border-[#E5E5EA] flex items-center justify-center overflow-hidden p-1">
+        <div className="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-11 w-11 shrink-0 rounded-[14px] bg-white shadow-sm border border-[#E5E5EA] flex items-center justify-center overflow-hidden p-1">
               <img src="/whitekost-logo.jpg" alt="White Kost 35" className="h-full w-full object-contain" />
             </div>
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-[#34C759] font-semibold flex items-center gap-1">
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-wider text-[#34C759] font-semibold flex items-center gap-1 whitespace-nowrap">
                 <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Admin · White Kost 35
               </p>
-              <h1 className="text-lg font-semibold tracking-tight text-[#1C1C1E]">
+              <h1 className="text-[17px] font-semibold tracking-tight text-[#1C1C1E] truncate">
                 Kelola Kamar Kost
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
+          <div className="flex items-center gap-1">
+            <button
               onClick={() => setBulkOpen(true)}
               data-testid="bulk-import-button"
-              className="rounded-full text-[#007AFF] hover:text-[#0051D5] hover:bg-[#E5F0FF]"
+              title="Import Massal"
+              aria-label="Import Massal"
+              className="h-10 w-10 rounded-full flex items-center justify-center text-[#007AFF] hover:bg-[#E5F0FF] active:bg-[#D6E4FF] transition-colors"
             >
-              <Upload className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Import
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
+              <Upload className="h-[19px] w-[19px]" strokeWidth={1.9} />
+            </button>
+            <button
               onClick={logout}
               data-testid="logout-button"
-              className="rounded-full text-[#007AFF] hover:text-[#0051D5] hover:bg-[#E5F0FF]"
+              title="Keluar"
+              aria-label="Keluar"
+              className="h-10 w-10 rounded-full flex items-center justify-center text-[#007AFF] hover:bg-[#E5F0FF] active:bg-[#D6E4FF] transition-colors"
             >
-              <LogOut className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Keluar
-            </Button>
+              <LogOut className="h-[19px] w-[19px]" strokeWidth={1.9} />
+            </button>
           </div>
         </div>
       </header>
