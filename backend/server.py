@@ -74,6 +74,17 @@ class RoomUpdate(BaseModel):
     tanggal_masuk: Optional[str] = None
 
 
+class BulkRow(BaseModel):
+    nomor_kamar: str
+    nama_penghuni: Optional[str] = None
+    tanggal_masuk: Optional[str] = None
+    foto_ktp: Optional[str] = None
+
+
+class BulkImportRequest(BaseModel):
+    rows: List[BulkRow]
+
+
 async def get_current_role(authorization: Optional[str] = Header(default=None)) -> str:
     if not authorization:
         raise HTTPException(status_code=401, detail="Token tidak ditemukan")
@@ -180,6 +191,39 @@ async def update_room(
     await db.rooms.update_one({"nomor_kamar": nomor_kamar}, {"$set": updates})
     merged = {**existing, **updates}
     return Room(**merged)
+
+
+@api_router.post("/rooms/bulk-import")
+async def bulk_import(payload: BulkImportRequest, _: str = Depends(require_admin)):
+    updated = 0
+    skipped = []
+    for row in payload.rows:
+        nomor = (row.nomor_kamar or "").strip()
+        if not nomor:
+            skipped.append({"nomor_kamar": nomor, "reason": "Nomor kamar kosong"})
+            continue
+        existing = await db.rooms.find_one({"nomor_kamar": nomor}, {"_id": 0})
+        if not existing:
+            skipped.append({"nomor_kamar": nomor, "reason": "Kamar tidak ditemukan"})
+            continue
+        upd = {}
+        if row.nama_penghuni is not None:
+            upd["nama_penghuni"] = row.nama_penghuni.strip()
+        if row.tanggal_masuk is not None:
+            upd["tanggal_masuk"] = row.tanggal_masuk.strip()
+        if row.foto_ktp is not None:
+            upd["foto_ktp"] = row.foto_ktp
+        if not upd:
+            skipped.append({"nomor_kamar": nomor, "reason": "Tidak ada perubahan"})
+            continue
+        merged = {**existing, **upd}
+        upd["is_occupied"] = bool(
+            merged.get("nama_penghuni") and merged.get("tanggal_masuk") and merged.get("foto_ktp")
+        )
+        upd["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.rooms.update_one({"nomor_kamar": nomor}, {"$set": upd})
+        updated += 1
+    return {"updated": updated, "skipped": skipped}
 
 
 app.include_router(api_router)

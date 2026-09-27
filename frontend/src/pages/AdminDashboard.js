@@ -14,6 +14,7 @@ import {
   Circle,
   DoorOpen,
   DoorClosed,
+  Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useAuth, API } from "@/context/AuthContext";
 import KtpViewer from "@/components/KtpViewer";
+import BulkImportDialog from "@/components/BulkImportDialog";
 import { formatLamaTinggal, formatTanggalID } from "@/lib/duration";
 
 const fileToBase64 = (file) =>
@@ -85,6 +87,7 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [emptyConfirm, setEmptyConfirm] = useState(null);
   const [viewer, setViewer] = useState(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -207,15 +210,26 @@ export default function AdminDashboard() {
               </h1>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={logout}
-            data-testid="logout-button"
-            className="rounded-full text-[#007AFF] hover:text-[#0051D5] hover:bg-[#E5F0FF]"
-          >
-            <LogOut className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Keluar
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBulkOpen(true)}
+              data-testid="bulk-import-button"
+              className="rounded-full text-[#007AFF] hover:text-[#0051D5] hover:bg-[#E5F0FF]"
+            >
+              <Upload className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Import
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              data-testid="logout-button"
+              className="rounded-full text-[#007AFF] hover:text-[#0051D5] hover:bg-[#E5F0FF]"
+            >
+              <LogOut className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Keluar
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -504,6 +518,13 @@ export default function AdminDashboard() {
           restricted={false}
         />
       )}
+
+      <BulkImportDialog
+        open={bulkOpen}
+        onOpenChange={setBulkOpen}
+        onSuccess={load}
+        authHeaders={authHeaders}
+      />
     </div>
   );
 }
