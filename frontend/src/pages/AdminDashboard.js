@@ -6,7 +6,6 @@ import {
   LogOut,
   Search,
   Pencil,
-  Home,
   ImagePlus,
   X,
   Loader2,
@@ -53,12 +52,32 @@ const FILTERS = [
   { key: "empty", label: "Kosong" },
 ];
 
+const GROUPS = [
+  { key: "all", label: "Semua" },
+  { key: "A", label: "Blok A" },
+  { key: "B", label: "Blok B" },
+  { key: "C", label: "Blok C" },
+  { key: "D", label: "Blok D" },
+  { key: "1", label: "Lantai 1" },
+  { key: "2", label: "Lantai 2" },
+  { key: "3", label: "Lantai 3" },
+  { key: "4", label: "Lantai 4" },
+];
+
+const matchGroup = (nomor, group) => {
+  if (group === "all") return true;
+  if (["A", "B", "C", "D"].includes(group)) return nomor.startsWith(group);
+  // floor keys: '1','2','3','4' -> match '101'..'106' etc.
+  return nomor.length === 3 && nomor.startsWith(group);
+};
+
 export default function AdminDashboard() {
   const { authHeaders, logout } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [group, setGroup] = useState("all");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ nama_penghuni: "", foto_ktp: "" });
@@ -86,6 +105,7 @@ export default function AdminDashboard() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return rooms.filter((r) => {
+      if (!matchGroup(r.nomor_kamar, group)) return false;
       if (filter === "occupied" && !r.is_occupied) return false;
       if (filter === "empty" && r.is_occupied) return false;
       if (!q) return true;
@@ -94,7 +114,7 @@ export default function AdminDashboard() {
         (r.nama_penghuni || "").toLowerCase().includes(q)
       );
     });
-  }, [rooms, search, filter]);
+  }, [rooms, search, filter, group]);
 
   const stats = useMemo(() => {
     const occupied = rooms.filter((r) => r.is_occupied).length;
@@ -161,18 +181,18 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FAF9F5] to-[#FFF8EC] pb-24">
-      <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/70 border-b border-stone-200/60">
+    <div className="min-h-screen bg-[#F2F2F7] pb-24">
+      <header className="sticky top-0 z-30 backdrop-blur-2xl bg-white/80 border-b border-[#E5E5EA]">
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-white shadow-sm border border-amber-100 flex items-center justify-center">
-              <Home className="h-5 w-5 text-amber-600" strokeWidth={1.7} />
+            <div className="h-11 w-11 rounded-[14px] bg-white shadow-sm border border-[#E5E5EA] flex items-center justify-center overflow-hidden p-1">
+              <img src="/whitekost-logo.jpg" alt="White Kost 35" className="h-full w-full object-contain" />
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wider text-amber-700 font-medium flex items-center gap-1">
-                <ShieldCheck className="h-3 w-3" /> Admin
+              <p className="text-[11px] uppercase tracking-wider text-[#34C759] font-semibold flex items-center gap-1">
+                <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Admin · White Kost 35
               </p>
-              <h1 className="text-lg font-semibold tracking-tight text-stone-900">
+              <h1 className="text-lg font-semibold tracking-tight text-[#1C1C1E]">
                 Kelola Kamar Kost
               </h1>
             </div>
@@ -182,9 +202,9 @@ export default function AdminDashboard() {
             size="sm"
             onClick={logout}
             data-testid="logout-button"
-            className="rounded-full text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+            className="rounded-full text-[#007AFF] hover:text-[#0051D5] hover:bg-[#E5F0FF]"
           >
-            <LogOut className="h-4 w-4 mr-1.5" /> Keluar
+            <LogOut className="h-4 w-4 mr-1.5" strokeWidth={1.75} /> Keluar
           </Button>
         </div>
       </header>
@@ -193,35 +213,54 @@ export default function AdminDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <StatCard label="Total" value={stats.total} tone="stone" />
-          <StatCard label="Terisi" value={stats.occupied} tone="amber" icon={<DoorClosed className="h-4 w-4" />} />
-          <StatCard label="Kosong" value={stats.empty} tone="emerald" icon={<DoorOpen className="h-4 w-4" />} />
+          <StatCard label="Terisi" value={stats.occupied} tone="green" icon={<DoorClosed className="h-4 w-4" />} />
+          <StatCard label="Kosong" value={stats.empty} tone="red" icon={<DoorOpen className="h-4 w-4" />} />
         </div>
 
         {/* Search + segmented filter */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <div className="relative flex-1">
-            <Search className="h-4 w-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <Search className="h-4 w-4 text-[#8E8E93] absolute left-4 top-1/2 -translate-y-1/2" strokeWidth={2} />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nomor kamar atau nama..."
               data-testid="search-input"
-              className="pl-11 h-12 rounded-2xl bg-white border-stone-200 focus-visible:ring-amber-500/50"
+              className="pl-11 h-12 rounded-[14px] bg-white border-[#E5E5EA] focus-visible:ring-[#007AFF]/40"
             />
           </div>
-          <div className="bg-stone-200/60 p-1 rounded-2xl flex gap-1 border border-stone-200/40">
+          <div className="bg-[#E5E5EA] p-1 rounded-[14px] flex gap-1">
             {FILTERS.map((f) => (
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
                 data-testid={`filter-${f.key}`}
-                className={`px-4 h-10 rounded-xl text-sm font-medium transition-all ${
+                className={`px-4 h-10 rounded-[10px] text-sm font-medium transition-all ${
                   filter === f.key
-                    ? "bg-white text-stone-900 shadow-sm"
-                    : "text-stone-500 hover:text-stone-800"
+                    ? "bg-white text-[#1C1C1E] shadow-sm"
+                    : "text-[#8E8E93] hover:text-[#1C1C1E]"
                 }`}
               >
                 {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-5 -mx-5 px-5 overflow-x-auto no-scrollbar">
+          <div className="flex gap-2 min-w-max">
+            {GROUPS.map((g) => (
+              <button
+                key={g.key}
+                onClick={() => setGroup(g.key)}
+                data-testid={`group-${g.key}`}
+                className={`px-4 h-9 rounded-full text-sm font-medium border transition-all whitespace-nowrap ${
+                  group === g.key
+                    ? "bg-[#1C1C1E] text-white border-[#1C1C1E] shadow-sm"
+                    : "bg-white text-[#3C3C43] border-[#E5E5EA] hover:border-[#C7C7CC] hover:bg-[#F2F2F7]"
+                }`}
+              >
+                {g.label}
               </button>
             ))}
           </div>
@@ -245,14 +284,14 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.015, 0.3) }}
                   data-testid={`room-card-${r.nomor_kamar}`}
-                  className={`group text-left rounded-3xl border transition-all overflow-hidden ${
+                  className={`group text-left rounded-[22px] border transition-all overflow-hidden ${
                     r.is_occupied
-                      ? "bg-white border-stone-200/70 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_30px_-8px_rgba(0,0,0,0.1)]"
-                      : "bg-stone-50/70 border-dashed border-stone-300"
+                      ? "bg-white border-[#34C759]/30 shadow-[0_4px_20px_-8px_rgba(52,199,89,0.25)] hover:shadow-[0_10px_30px_-8px_rgba(52,199,89,0.35)]"
+                      : "bg-white border-dashed border-[#FF3B30]/40"
                   }`}
                 >
                   <div
-                    className={`relative aspect-[16/10] ${r.is_occupied ? "bg-stone-100 cursor-pointer" : "bg-transparent"} overflow-hidden`}
+                    className={`relative aspect-[16/10] ${r.is_occupied ? "bg-[#F2F2F7] cursor-pointer" : "bg-[#FFF5F5]"} overflow-hidden`}
                     onClick={() =>
                       r.is_occupied &&
                       setViewer({
@@ -269,9 +308,9 @@ export default function AdminDashboard() {
                         className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-stone-400">
-                        <DoorOpen className="h-8 w-8 mb-1.5" strokeWidth={1.4} />
-                        <span className="text-xs font-medium">Kamar Kosong</span>
+                      <div className="w-full h-full flex flex-col items-center justify-center text-[#FF3B30]">
+                        <DoorOpen className="h-8 w-8 mb-1.5" strokeWidth={1.5} />
+                        <span className="text-xs font-semibold">Kamar Kosong</span>
                       </div>
                     )}
                   </div>
@@ -279,21 +318,21 @@ export default function AdminDashboard() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-0.5">
                         <span
-                          className={`inline-flex items-center rounded-full text-[11px] font-medium px-2 py-0.5 border ${
+                          className={`inline-flex items-center rounded-full text-[11px] font-semibold px-2 py-0.5 ${
                             r.is_occupied
-                              ? "bg-amber-50 border-amber-100 text-amber-800"
-                              : "bg-stone-100 border-stone-200 text-stone-600"
+                              ? "bg-[#34C759]/15 text-[#248A3D]"
+                              : "bg-[#FF3B30]/12 text-[#D70015]"
                           }`}
                         >
                           {r.nomor_kamar}
                         </span>
                         {r.is_occupied ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                          <CheckCircle2 className="h-3.5 w-3.5 text-[#34C759]" strokeWidth={2.2} />
                         ) : (
-                          <Circle className="h-3.5 w-3.5 text-stone-300" />
+                          <Circle className="h-3.5 w-3.5 text-[#FF3B30]/50" strokeWidth={2} />
                         )}
                       </div>
-                      <p className={`text-sm truncate ${r.is_occupied ? "text-stone-900 font-medium" : "text-stone-400 italic"}`}>
+                      <p className={`text-sm truncate ${r.is_occupied ? "text-[#1C1C1E] font-medium" : "text-[#FF3B30]/70 italic"}`}>
                         {r.is_occupied ? r.nama_penghuni : "Belum ada penghuni"}
                       </p>
                     </div>
@@ -302,9 +341,9 @@ export default function AdminDashboard() {
                       size="icon"
                       onClick={() => openEdit(r)}
                       data-testid={`edit-button-${r.nomor_kamar}`}
-                      className="h-9 w-9 shrink-0 rounded-full text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+                      className="h-9 w-9 shrink-0 rounded-full text-[#007AFF] hover:bg-[#E5F0FF]"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" strokeWidth={1.75} />
                     </Button>
                   </div>
                 </motion.div>
@@ -439,13 +478,13 @@ export default function AdminDashboard() {
 
 const StatCard = ({ label, value, tone, icon }) => {
   const tones = {
-    stone: "bg-white border-stone-200/70 text-stone-900",
-    amber: "bg-amber-50 border-amber-100 text-amber-900",
-    emerald: "bg-emerald-50 border-emerald-100 text-emerald-900",
+    stone: "bg-white border-[#E5E5EA] text-[#1C1C1E]",
+    green: "bg-[#34C759]/12 border-[#34C759]/25 text-[#248A3D]",
+    red: "bg-[#FF3B30]/10 border-[#FF3B30]/25 text-[#D70015]",
   };
   return (
-    <div className={`rounded-2xl border p-4 ${tones[tone]}`}>
-      <div className="flex items-center gap-1.5 text-xs font-medium opacity-80">
+    <div className={`rounded-[18px] border p-4 ${tones[tone]}`}>
+      <div className="flex items-center gap-1.5 text-xs font-medium opacity-90">
         {icon}
         {label}
       </div>

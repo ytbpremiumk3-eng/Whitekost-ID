@@ -1,0 +1,42 @@
+{
+  "summary": "Smoke tested backend auth + rooms endpoints (all pass) and frontend login/admin/viewer flows. Critical UI bug found: frontend enforces PIN_LENGTH=6 but User PIN is 8 digits (00100735), so viewer role cannot log in via UI.",
+  "tested_scope": ["backend", "frontend", "auth", "integration"],
+  "passed": [
+    "POST /api/auth/login PIN 060896 -> 200 role=admin",
+    "POST /api/auth/login PIN 00100735 -> 200 role=user",
+    "POST /api/auth/login wrong PIN -> 401",
+    "GET /api/rooms (admin) returns 68 rooms in correct order A1..A11,B..D..,101..406",
+    "GET /api/rooms (user) returns only occupied rooms",
+    "GET /api/rooms without Authorization -> 401",
+    "PUT /api/rooms/A2 admin occupy with nama+foto (base64) -> 200 saved",
+    "PUT /api/rooms/A3 admin occupy WITHOUT nama/foto -> 400",
+    "PUT /api/rooms/A2 as user -> 403",
+    "PUT /api/rooms/A2 without auth -> 401",
+    "PUT /api/rooms/A2 admin is_occupied=false clears nama & foto_ktp",
+    "LoginPage keypad renders, dot indicator visible, wrong PIN triggers 401 console error (shake path)",
+    "Admin PIN 060896 auto-submits on 6th digit and redirects to /admin",
+    "AdminDashboard renders 68 room cards, filter-empty works (67 empty after cleanup), edit sheet opens with input-nama-penghuni",
+    "Admin logout returns to /"
+  ],
+  "failed": [
+    {
+      "area": "Frontend LoginPage",
+      "issue": "PIN_LENGTH is hardcoded to 6 in /app/frontend/src/pages/LoginPage.js but User (Viewer) PIN is '00100735' (8 digits). Typing 6 digits auto-submits with '001007' which is rejected as wrong PIN. Viewer role is impossible to reach via UI.",
+      "evidence": "grep shows `const PIN_LENGTH = 6;` and `setPin((prev) => (prev.length < PIN_LENGTH ? prev + digit : prev));`. Test attempt to log in as user timed out on `**/viewer**` navigation; backend accepts 00100735 via direct curl.",
+      "priority": "HIGH"
+    },
+    {
+      "area": "Frontend AdminDashboard edit sheet",
+      "issue": "`input-foto-ktp` testid was not found when edit sheet initially opens for an empty room; only `input-nama-penghuni` was present. This may be by design (foto only shown when marking occupied) but should be confirmed.",
+      "evidence": "Playwright query_selector('[data-testid=\"input-foto-ktp\"]') returned null on edit sheet for empty room A1.",
+      "priority": "LOW"
+    }
+  ],
+  "action_items": [
+    "Fix PIN length handling in LoginPage.js: either change PIN_LENGTH to support variable-length PINs (accept up to 8 and auto-submit on match, or add a submit button), or align backend User PIN to 6 digits. Recommended: dynamic length or 8-digit support so both admin(6) and user(8) work.",
+    "(Optional) Verify input-foto-ktp is intentionally hidden until is_occupied toggle is set; ensure admin can upload photo when marking a room occupied."
+  ],
+  "success_rate": {"backend": "100%", "frontend": "~70% (viewer role unreachable via UI)"},
+  "retest_needed": true,
+  "full_testing_deferred": true
+}

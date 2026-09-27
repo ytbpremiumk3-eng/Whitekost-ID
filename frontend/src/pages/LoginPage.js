@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Delete, Home, ShieldCheck } from "lucide-react";
+import { Delete, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 
@@ -14,9 +14,9 @@ const PinDots = ({ length, filled, error }) => (
         className={`h-3.5 w-3.5 rounded-full border ${
           i < filled
             ? error
-              ? "bg-red-500 border-red-500"
-              : "bg-stone-900 border-stone-900"
-            : "bg-transparent border-stone-300"
+              ? "bg-[#FF3B30] border-[#FF3B30]"
+              : "bg-[#1C1C1E] border-[#1C1C1E]"
+            : "bg-transparent border-[#C7C7CC]"
         } transition-colors duration-150`}
       />
     ))}
@@ -29,7 +29,7 @@ const KeypadButton = ({ value, onPress, icon, testId, disabled }) => (
     onClick={() => onPress(value)}
     disabled={disabled}
     data-testid={testId}
-    className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full bg-white/80 backdrop-blur-xl border border-stone-200/70 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.06)] flex items-center justify-center text-2xl font-light text-stone-800 hover:bg-amber-50 active:bg-amber-100 transition-colors duration-150 disabled:opacity-40"
+    className="w-[72px] h-[72px] sm:w-[78px] sm:h-[78px] rounded-full bg-white/90 backdrop-blur-2xl border border-[#E5E5EA] shadow-[0_2px_10px_-2px_rgba(0,0,0,0.06)] flex items-center justify-center text-[28px] font-light text-[#1C1C1E] hover:bg-[#F2F2F7] active:bg-[#E5E5EA] transition-colors duration-150 disabled:opacity-40"
   >
     {icon || value}
   </motion.button>
@@ -61,7 +61,7 @@ export default function LoginPage() {
       setLoading(true);
       try {
         const role = await login(pin);
-        toast.success(role === "admin" ? "Selamat datang, Admin" : "Selamat datang");
+        toast.success(role === "admin" ? "Selamat datang, Admin" : "Selamat datang, RT");
       } catch (e) {
         setError(true);
         toast.error("PIN salah, coba lagi");
@@ -76,9 +76,10 @@ export default function LoginPage() {
   const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-[#FAF9F5] via-[#FFFBEB] to-[#FAF4E1] px-6 py-10 relative overflow-hidden">
-      {/* subtle grain */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-multiply" style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.9'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>\")" }} />
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F2F2F7] px-6 py-10 relative overflow-hidden">
+      {/* subtle iOS wallpaper gradient */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-[#F2F2F7] to-[#E5E5EA]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.025] mix-blend-multiply" style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.9'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>\")" }} />
 
       <AnimatePresence>
         <motion.div
@@ -87,14 +88,17 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-sm text-center relative z-10"
         >
-          <div className="mx-auto mb-6 h-14 w-14 rounded-2xl bg-white shadow-[0_4px_20px_-4px_rgba(202,138,4,0.35)] border border-amber-100 flex items-center justify-center">
-            <Home className="h-7 w-7 text-amber-600" strokeWidth={1.6} />
+          <div className="mx-auto mb-4 h-24 w-24 rounded-[26px] bg-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] border border-[#E5E5EA] flex items-center justify-center overflow-hidden p-2">
+            <img src="/whitekost-logo.jpg" alt="White Kost 35" className="h-full w-full object-contain" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-stone-900 mb-1">
-            Kost KTP Manager
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1C1C1E] mb-1">
+            White Kost 35
           </h1>
-          <p className="text-sm text-stone-500 mb-10 flex items-center justify-center gap-1.5">
-            <ShieldCheck className="h-3.5 w-3.5" /> Masuk dengan 6 digit PIN
+          <p className="text-[13px] text-[#8E8E93] italic mb-1">
+            Tempatmu diterima dan dihargai
+          </p>
+          <p className="text-sm text-[#8E8E93] mb-10 flex items-center justify-center gap-1.5 mt-3">
+            <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.5} /> Masuk dengan 6 digit PIN
           </p>
 
           <PinDots length={PIN_LENGTH} filled={pin.length} error={error} />
@@ -116,9 +120,9 @@ export default function LoginPage() {
               onClick={handleDelete}
               disabled={loading || pin.length === 0}
               data-testid="pin-key-delete"
-              className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full flex items-center justify-center text-stone-500 hover:text-stone-800 disabled:opacity-30 transition-colors"
+              className="w-[72px] h-[72px] sm:w-[78px] sm:h-[78px] rounded-full flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] disabled:opacity-30 transition-colors"
             >
-              <Delete className="h-6 w-6" strokeWidth={1.6} />
+              <Delete className="h-6 w-6" strokeWidth={1.5} />
             </motion.button>
           </div>
 

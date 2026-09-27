@@ -18,15 +18,15 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 ADMIN_PIN = "060896"
-USER_PIN = "00100735"
+USER_PIN = "010735"
 
 TOKEN_TO_ROLE = {
     "kost-admin-token-060896": "admin",
-    "kost-viewer-token-00100735": "user",
+    "kost-viewer-token-010735": "user",
 }
 PIN_TO_TOKEN = {
     ADMIN_PIN: "kost-admin-token-060896",
-    USER_PIN: "kost-viewer-token-00100735",
+    USER_PIN: "kost-viewer-token-010735",
 }
 
 

@@ -1,7 +1,7 @@
 .App {
     min-height: 100vh;
-    background: #FAF9F5;
-    color: #1C1917;
+    background: #F2F2F7;
+    color: #1C1C1E;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
         "Inter", "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -11,4 +11,13 @@
 /* Prevent long-press callout on iOS for images inside viewer role */
 img {
     -webkit-touch-callout: none;
+}
+
+/* Hide scrollbar for horizontal filter tabs */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
