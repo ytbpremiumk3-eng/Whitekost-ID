@@ -39,6 +39,7 @@ import {
 import { useAuth, API } from "@/context/AuthContext";
 import KtpViewer from "@/components/KtpViewer";
 import BulkImportDialog from "@/components/BulkImportDialog";
+import Footer from "@/components/Footer";
 import { formatLamaTinggal, formatTanggalID } from "@/lib/duration";
 
 const fileToBase64 = (file) =>
@@ -525,6 +526,8 @@ export default function AdminDashboard() {
         onSuccess={load}
         authHeaders={authHeaders}
       />
+
+      <Footer />
     </div>
   );
 }

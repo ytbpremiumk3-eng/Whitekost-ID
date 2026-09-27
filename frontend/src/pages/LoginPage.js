@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Delete, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import Footer from "@/components/Footer";
 
 const PinDots = ({ length, filled, error }) => (
   <div className="flex items-center justify-center gap-4 mb-10" data-testid="pin-indicator">
@@ -126,11 +127,15 @@ export default function LoginPage() {
             </motion.button>
           </div>
 
-          <p className="text-xs text-stone-400 mt-10">
+          <p className="text-xs text-[#8E8E93] mt-10">
             Sistem manajemen KTP penghuni kost · Privasi terjaga
           </p>
         </motion.div>
       </AnimatePresence>
+
+      <div className="absolute bottom-0 inset-x-0 z-10">
+        <Footer />
+      </div>
     </div>
   );
 }

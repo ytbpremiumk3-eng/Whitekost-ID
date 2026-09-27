@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth, API } from "@/context/AuthContext";
 import KtpViewer from "@/components/KtpViewer";
 import { useNoCapture } from "@/hooks/useNoCapture";
+import Footer from "@/components/Footer";
 import { formatLamaTinggal, formatTanggalID } from "@/lib/duration";
 
 const GROUPS = [
@@ -216,6 +217,8 @@ export default function ViewerDashboard() {
           restricted={true}
         />
       )}
+
+      <Footer />
     </div>
   );
 }
