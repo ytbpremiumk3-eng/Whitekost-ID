@@ -94,8 +94,8 @@ export default function ViewerDashboard() {
       </header>
 
       <main className="max-w-5xl mx-auto px-5 pt-6">
-        <div className="mb-5 rounded-[18px] bg-[#FFF9E6] border border-[#FFCC00]/30 px-4 py-3 flex items-start gap-3">
-          <ShieldAlert className="h-5 w-5 text-[#FF9500] mt-0.5 shrink-0" strokeWidth={2} />
+        <div className="mb-5 rounded-[18px] bg-white border border-[#E5E5EA] shadow-[0_1px_2px_rgba(0,0,0,0.04)] px-4 py-3 flex items-start gap-3">
+          <ShieldAlert className="h-5 w-5 text-[#FF3B30] mt-0.5 shrink-0" strokeWidth={2} />
           <div className="text-sm text-[#3C3C43] leading-relaxed">
             Data ini bersifat rahasia. Screenshot, unduh, dan simpan gambar
             <span className="font-semibold text-[#1C1C1E]"> dilarang</span> dan dinonaktifkan di sistem.
