@@ -1,0 +1,14 @@
+.App {
+    min-height: 100vh;
+    background: #FAF9F5;
+    color: #1C1917;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+        "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent long-press callout on iOS for images inside viewer role */
+img {
+    -webkit-touch-callout: none;
+}

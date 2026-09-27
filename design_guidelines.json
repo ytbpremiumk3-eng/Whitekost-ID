@@ -1,0 +1,92 @@
+{
+  "project_name": "Kost ID Admin & RT Viewer",
+  "app_type": "mobile_web_app",
+  "theme": "Apple iOS Modern Minimalist dengan Aksen Warna Hangat (Warm Elegant)",
+  "language": "Bahasa Indonesia",
+  "auth": {
+    "type": "6-Digit PIN",
+    "admin_pin": "060896",
+    "user_pin": "00100735",
+    "ui": "iOS Lock Screen Keypad Style (Glass circles, 6-dot indicator, tactile feedback, vibration effect simulation)"
+  },
+  "roles": {
+    "admin": {
+      "name": "Admin Kost",
+      "permissions": ["create", "read", "update", "delete", "upload_ktp_base64"],
+      "capabilities": "Kendali penuh tambah, edit, hapus data penghuni dan foto KTP"
+    },
+    "user": {
+      "name": "RT / RW / Owner (View Only)",
+      "permissions": ["read"],
+      "capabilities": "Lihat daftar penghuni, cari nomor kamar, tap foto KTP untuk tampilan penuh & zoom",
+      "restrictions": {
+        "download_disabled": true,
+        "screenshot_warning_banner": true,
+        "context_menu_disabled": true,
+        "drag_drop_disabled": true,
+        "user_select_none": true,
+        "watermark_overlay": "HANYA DOKUMEN VERIFIKASI RT/RW - DILARANG TANGKAP LAYAR / SIMPAN"
+      }
+    }
+  },
+  "fields": ["nomor_kamar", "nama_penghuni", "foto_ktp"],
+  "colors": {
+    "archetype": "Organic Warm & Apple SF Minimalist",
+    "background_light": "#FAF9F5",
+    "background_card": "#FFFFFF",
+    "primary_accent": "#D97706",
+    "primary_accent_warm": "#CA8A04",
+    "secondary_warm": "#FFFBEB",
+    "text_dark": "#1C1917",
+    "text_muted": "#78716C",
+    "border_subtle": "#E7E5E4",
+    "ios_blur_bg": "rgba(255, 255, 255, 0.75)",
+    "security_warning_bg": "#FEF2F2",
+    "security_warning_text": "#991B1B"
+  },
+  "typography": {
+    "headline_font": "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif",
+    "body_font": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif",
+    "mono_font": "SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+    "h1_hero": "text-2xl sm:text-3xl font-semibold tracking-tight text-stone-900",
+    "h2_section": "text-xl font-semibold tracking-tight text-stone-800",
+    "card_title": "text-lg font-medium text-stone-900",
+    "body_text": "text-sm text-stone-600 leading-relaxed"
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-white/75 border border-white/40 shadow-sm",
+    "ios_card": "bg-white rounded-3xl border border-stone-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all duration-200 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]",
+    "keypad_button": "w-16 h-16 rounded-full bg-stone-100 active:bg-amber-100 flex items-center justify-center text-xl font-semibold text-stone-800 transition-all duration-150 active:scale-95 shadow-xs border border-stone-200/50",
+    "segmented_control": "bg-stone-200/60 p-1 rounded-2xl flex gap-1 border border-stone-200/40"
+  },
+  "responsive": {
+    "breakpoint": "Mobile-first priority (375px - 430px ideal iOS viewport), scale gracefully to tablet and desktop",
+    "layout": "Single column fluid stack on mobile, grid layout on desktop (grid-cols-1 md:grid-cols-2 lg:grid-cols-3)",
+    "tap_targets": "Minimum 44px x 44px touch targets for all interactive buttons and keypad inputs",
+    "overflow_guard": "Strict overflow-x-hidden on root and sheet containers"
+  },
+  "image_urls": {
+    "default_ktp_placeholders": [
+      "https://images.unsplash.com/photo-1782954016206-8090bfdb90a7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NxAxODF8MHwxfHNlYXJjaHwxfHxpZGVudGl0eSUyMGNhcmQlMjBwaG90byUyMHRlbXBsYXRlJTIwbW9ja3VwfGVufDB8fHx8MTc5MDU0NDA1Mnww&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1717704637784-a59113ed0edd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NxAxODF8MHwxfHNlYXJjaHwzfHxpZGVudGl0eSUyMGNhcmQlMjBwaG90byUyMHRlbXBsYXRlJTIwbW9ja3VwfGVufDB8fHx8MTc5MDU0NDA1Mnww&ixlib=rb-4.1.0&q=85"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Build the application using JavaScript React components (.js files, not .tsx).",
+    "Implement PIN Login with exact PINs: Admin '060896', User '00100735'. Store session state in LocalStorage or React Context.",
+    "Data structure per resident: id, nomor_kamar (string, e.g. '101', 'A-02'), nama_penghuni (string), foto_ktp (base64 string or URL).",
+    "Ensure strict Protection for Role User (RT/RW/Owner): prevent context menu, disable image drag, user-select: none, floating security notice overlay on fullscreen viewer.",
+    "Include zoom/pan controls (+ / - / reset and touch scale) in the Fullscreen KTP viewer Modal.",
+    "Admin actions: Add resident modal/sheet with image file picker converting to Base64, Edit resident sheet, Delete confirm dialog.",
+    "Add test IDs (`data-testid`) on all primary elements (login pin buttons, logout button, room input, name input, upload button, submit button, search input, resident card, edit button, delete button, zoom controls)."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons. Use Lucide or Radix icons instead.",
+    "Every interaction needs micro-animations - hover states, transitions, entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, selection states, and loading animations separate good from extraordinary.",
+    "All interactive and key informational elements MUST include a data-testid attribute."
+  ]
+}
