@@ -19,14 +19,17 @@ db = client[os.environ['DB_NAME']]
 
 ADMIN_PIN = "060896"
 USER_PIN = "010735"
+PAK_RT_PIN = "001007"
 
 TOKEN_TO_ROLE = {
     "kost-admin-token-060896": "admin",
     "kost-viewer-token-010735": "user",
+    "kost-viewer-token-001007": "user",
 }
 PIN_TO_TOKEN = {
     ADMIN_PIN: "kost-admin-token-060896",
     USER_PIN: "kost-viewer-token-010735",
+    PAK_RT_PIN: "kost-viewer-token-001007",
 }
 
 
