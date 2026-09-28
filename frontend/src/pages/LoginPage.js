@@ -62,7 +62,7 @@ export default function LoginPage() {
       setLoading(true);
       try {
         const role = await login(pin);
-        toast.success(role === "admin" ? "Selamat datang, Admin" : "Selamat datang, RT");
+        toast.success(role === "admin" ? "Selamat datang, Admin" : "Selamat datang, Bu RT");
       } catch (e) {
         setError(true);
         toast.error("PIN salah, coba lagi");
