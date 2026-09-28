@@ -231,10 +231,15 @@ async def bulk_import(payload: BulkImportRequest, _: str = Depends(require_admin
 
 app.include_router(api_router)
 
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+origins = [o.strip() for o in cors_origins.split(',')]
+if "*" in origins:
+    origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=origins,
+    allow_credentials=True if "*" not in origins else False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
